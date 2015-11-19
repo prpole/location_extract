@@ -3,8 +3,9 @@ import nltk
 from nltk.tag.stanford import StanfordNERTagger
 from geopy.geocoders import Nominatim
 import re
+from time import sleep
 
-st = StanfordNERTagger('/home/prpole/Tech/stanford-ner-2015-04-20/classifiers/english.all.3class.distsim.crf.ser.gz', '/home/prpole/Tech/stanford-ner-2015-04-20/stanford-ner.jar')
+st = StanfordNERTagger('/home/phlip/location_extract/stanford-ner-2015-04-20/classifiers/english.all.3class.distsim.crf.ser.gz','/home/phlip/location_extract/stanford-ner-2015-04-20/stanford-ner.jar')
 
 def loctag(tokes):
     tagged = st.tag(tokes)
@@ -13,9 +14,18 @@ def loctag(tokes):
 
 def loclook(locations):
     geocator = Nominatim()
-    coordinates = [ geocator.geocode(x) 
-                    for x in locations
-                    if geocator.geocode(x) != None ]
+    
+    ### Note: no comprehension to allow for 1 sec sleep
+    #coordinates = [ geocator.geocode(x) 
+    #                for x in locations
+    #                if geocator.geocode(x) != None ]
+
+    for location in locations:
+        geo = geocator.geocode(location)
+        if geo != None:
+            coordinates.append(x)
+        sleep(1)
+
     cleancords = [ (x.latitude,x.longitude)
                     for x in coordinates ]
     return cleancords
