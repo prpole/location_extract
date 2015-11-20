@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>QGIS2leaf webmap</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+		<link rel="stylesheet" type="text/css" href="css/own_style.css">
+		<link rel="stylesheet" href="css/label.css" />
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+		<script src="js/leaflet-hash.js"></script>
+		<script src="js/label.js"></script>
+		<script src="js/Autolinker.min.js"></script>
+	</head>
+	<body>
+		<div id="map"></div>
+		<script src="data/exp_financierquotes.js"></script>
+		<script src="data/exp_financiernarr.js"></script>
+		<script src="data/exp_ne50madmin0countries.js"></script>
+		<script>
+		var map = L.map('map', {
+			zoomControl:true, maxZoom:19
+		}).fitBounds([[-36.1944713472,-147.442771084],[83.3072031337,41.5572289157]]);
+		var hash = new L.Hash(map);
+		var additional_attrib = 'created w. <a href="https://github.com/geolicious/qgis2leaf" target ="_blank">qgis2leaf</a> by <a href="http://www.geolicious.de" target ="_blank">Geolicious</a> & contributors<br>';
+		var feature_group = new L.featureGroup([]);
+		var raster_group = new L.LayerGroup([]);	
+		var layerOrder=new Array();
+		function pop_ne50madmin0countries(feature, layer) {					
+			var popupContent = '<table><tr><th scope="row">scalerank</th><td>' + Autolinker.link(String(feature.properties['scalerank'])) + '</td></tr><tr><th scope="row">featurecla</th><td>' + Autolinker.link(String(feature.properties['featurecla'])) + '</td></tr><tr><th scope="row">labelrank</th><td>' + Autolinker.link(String(feature.properties['labelrank'])) + '</td></tr><tr><th scope="row">sovereignt</th><td>' + Autolinker.link(String(feature.properties['sovereignt'])) + '</td></tr><tr><th scope="row">sov_a3</th><td>' + Autolinker.link(String(feature.properties['sov_a3'])) + '</td></tr><tr><th scope="row">adm0_dif</th><td>' + Autolinker.link(String(feature.properties['adm0_dif'])) + '</td></tr><tr><th scope="row">level</th><td>' + Autolinker.link(String(feature.properties['level'])) + '</td></tr><tr><th scope="row">type</th><td>' + Autolinker.link(String(feature.properties['type'])) + '</td></tr><tr><th scope="row">admin</th><td>' + Autolinker.link(String(feature.properties['admin'])) + '</td></tr><tr><th scope="row">adm0_a3</th><td>' + Autolinker.link(String(feature.properties['adm0_a3'])) + '</td></tr><tr><th scope="row">geou_dif</th><td>' + Autolinker.link(String(feature.properties['geou_dif'])) + '</td></tr><tr><th scope="row">geounit</th><td>' + Autolinker.link(String(feature.properties['geounit'])) + '</td></tr><tr><th scope="row">gu_a3</th><td>' + Autolinker.link(String(feature.properties['gu_a3'])) + '</td></tr><tr><th scope="row">su_dif</th><td>' + Autolinker.link(String(feature.properties['su_dif'])) + '</td></tr><tr><th scope="row">subunit</th><td>' + Autolinker.link(String(feature.properties['subunit'])) + '</td></tr><tr><th scope="row">su_a3</th><td>' + Autolinker.link(String(feature.properties['su_a3'])) + '</td></tr><tr><th scope="row">brk_diff</th><td>' + Autolinker.link(String(feature.properties['brk_diff'])) + '</td></tr><tr><th scope="row">name</th><td>' + Autolinker.link(String(feature.properties['name'])) + '</td></tr><tr><th scope="row">name_long</th><td>' + Autolinker.link(String(feature.properties['name_long'])) + '</td></tr><tr><th scope="row">brk_a3</th><td>' + Autolinker.link(String(feature.properties['brk_a3'])) + '</td></tr><tr><th scope="row">brk_name</th><td>' + Autolinker.link(String(feature.properties['brk_name'])) + '</td></tr><tr><th scope="row">brk_group</th><td>' + Autolinker.link(String(feature.properties['brk_group'])) + '</td></tr><tr><th scope="row">abbrev</th><td>' + Autolinker.link(String(feature.properties['abbrev'])) + '</td></tr><tr><th scope="row">postal</th><td>' + Autolinker.link(String(feature.properties['postal'])) + '</td></tr><tr><th scope="row">formal_en</th><td>' + Autolinker.link(String(feature.properties['formal_en'])) + '</td></tr><tr><th scope="row">formal_fr</th><td>' + Autolinker.link(String(feature.properties['formal_fr'])) + '</td></tr><tr><th scope="row">note_adm0</th><td>' + Autolinker.link(String(feature.properties['note_adm0'])) + '</td></tr><tr><th scope="row">note_brk</th><td>' + Autolinker.link(String(feature.properties['note_brk'])) + '</td></tr><tr><th scope="row">name_sort</th><td>' + Autolinker.link(String(feature.properties['name_sort'])) + '</td></tr><tr><th scope="row">name_alt</th><td>' + Autolinker.link(String(feature.properties['name_alt'])) + '</td></tr><tr><th scope="row">mapcolor7</th><td>' + Autolinker.link(String(feature.properties['mapcolor7'])) + '</td></tr><tr><th scope="row">mapcolor8</th><td>' + Autolinker.link(String(feature.properties['mapcolor8'])) + '</td></tr><tr><th scope="row">mapcolor9</th><td>' + Autolinker.link(String(feature.properties['mapcolor9'])) + '</td></tr><tr><th scope="row">mapcolor13</th><td>' + Autolinker.link(String(feature.properties['mapcolor13'])) + '</td></tr><tr><th scope="row">pop_est</th><td>' + Autolinker.link(String(feature.properties['pop_est'])) + '</td></tr><tr><th scope="row">gdp_md_est</th><td>' + Autolinker.link(String(feature.properties['gdp_md_est'])) + '</td></tr><tr><th scope="row">pop_year</th><td>' + Autolinker.link(String(feature.properties['pop_year'])) + '</td></tr><tr><th scope="row">lastcensus</th><td>' + Autolinker.link(String(feature.properties['lastcensus'])) + '</td></tr><tr><th scope="row">gdp_year</th><td>' + Autolinker.link(String(feature.properties['gdp_year'])) + '</td></tr><tr><th scope="row">economy</th><td>' + Autolinker.link(String(feature.properties['economy'])) + '</td></tr><tr><th scope="row">income_grp</th><td>' + Autolinker.link(String(feature.properties['income_grp'])) + '</td></tr><tr><th scope="row">wikipedia</th><td>' + Autolinker.link(String(feature.properties['wikipedia'])) + '</td></tr><tr><th scope="row">fips_10</th><td>' + Autolinker.link(String(feature.properties['fips_10'])) + '</td></tr><tr><th scope="row">iso_a2</th><td>' + Autolinker.link(String(feature.properties['iso_a2'])) + '</td></tr><tr><th scope="row">iso_a3</th><td>' + Autolinker.link(String(feature.properties['iso_a3'])) + '</td></tr><tr><th scope="row">iso_n3</th><td>' + Autolinker.link(String(feature.properties['iso_n3'])) + '</td></tr><tr><th scope="row">un_a3</th><td>' + Autolinker.link(String(feature.properties['un_a3'])) + '</td></tr><tr><th scope="row">wb_a2</th><td>' + Autolinker.link(String(feature.properties['wb_a2'])) + '</td></tr><tr><th scope="row">wb_a3</th><td>' + Autolinker.link(String(feature.properties['wb_a3'])) + '</td></tr><tr><th scope="row">woe_id</th><td>' + Autolinker.link(String(feature.properties['woe_id'])) + '</td></tr><tr><th scope="row">adm0_a3_is</th><td>' + Autolinker.link(String(feature.properties['adm0_a3_is'])) + '</td></tr><tr><th scope="row">adm0_a3_us</th><td>' + Autolinker.link(String(feature.properties['adm0_a3_us'])) + '</td></tr><tr><th scope="row">adm0_a3_un</th><td>' + Autolinker.link(String(feature.properties['adm0_a3_un'])) + '</td></tr><tr><th scope="row">adm0_a3_wb</th><td>' + Autolinker.link(String(feature.properties['adm0_a3_wb'])) + '</td></tr><tr><th scope="row">continent</th><td>' + Autolinker.link(String(feature.properties['continent'])) + '</td></tr><tr><th scope="row">region_un</th><td>' + Autolinker.link(String(feature.properties['region_un'])) + '</td></tr><tr><th scope="row">subregion</th><td>' + Autolinker.link(String(feature.properties['subregion'])) + '</td></tr><tr><th scope="row">region_wb</th><td>' + Autolinker.link(String(feature.properties['region_wb'])) + '</td></tr><tr><th scope="row">name_len</th><td>' + Autolinker.link(String(feature.properties['name_len'])) + '</td></tr><tr><th scope="row">long_len</th><td>' + Autolinker.link(String(feature.properties['long_len'])) + '</td></tr><tr><th scope="row">abbrev_len</th><td>' + Autolinker.link(String(feature.properties['abbrev_len'])) + '</td></tr><tr><th scope="row">tiny</th><td>' + Autolinker.link(String(feature.properties['tiny'])) + '</td></tr><tr><th scope="row">homepart</th><td>' + Autolinker.link(String(feature.properties['homepart'])) + '</td></tr></table>';
+			layer.bindPopup(popupContent);
+		}
+
+		function doStylene50madmin0countries(feature) {
+				return {
+					color: '#afb38a',
+					fillColor: '#f1f4c7',
+					weight: 1.3,
+					dashArray: '',
+					opacity: 1.0,
+					fillOpacity: 1.0
+				};
+
+		}
+		var exp_ne50madmin0countriesJSON = new L.geoJson(exp_ne50madmin0countries,{
+			onEachFeature: pop_ne50madmin0countries,
+			style: doStylene50madmin0countries
+		});
+		layerOrder[layerOrder.length] = exp_ne50madmin0countriesJSON;
+		for (index = 0; index < layerOrder.length; index++) {
+			feature_group.removeLayer(layerOrder[index]);feature_group.addLayer(layerOrder[index]);
+		}
+		//add comment sign to hide this layer on the map in the initial view.
+		feature_group.addLayer(exp_ne50madmin0countriesJSON);
+		function pop_financiernarr(feature, layer) {					
+			var popupContent = '<table><tr><th scope="row">name</th><td>' + Autolinker.link(String(feature.properties['name'])) + '</td></tr><tr><th scope="row">latitude</th><td>' + Autolinker.link(String(feature.properties['latitude'])) + '</td></tr><tr><th scope="row">longitude</th><td>' + Autolinker.link(String(feature.properties['longitude'])) + '</td></tr></table>';
+			layer.bindPopup(popupContent);
+		}
+
+		var exp_financiernarrJSON = new L.geoJson(exp_financiernarr,{
+			onEachFeature: pop_financiernarr,
+			pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: 4.0,
+					fillColor: '#fcff39',
+					color: '#000000',
+					weight: 1,
+					opacity: 1.0,
+					fillOpacity: 1.0
+				})
+			}
+		});
+		//add comment sign to hide this layer on the map in the initial view.
+		feature_group.addLayer(exp_financiernarrJSON);
+		function pop_financierquotes(feature, layer) {					
+			var popupContent = '<table><tr><th scope="row">name</th><td>' + Autolinker.link(String(feature.properties['name'])) + '</td></tr><tr><th scope="row">latitude</th><td>' + Autolinker.link(String(feature.properties['latitude'])) + '</td></tr><tr><th scope="row">longitude</th><td>' + Autolinker.link(String(feature.properties['longitude'])) + '</td></tr></table>';
+			layer.bindPopup(popupContent);
+		}
+
+		var exp_financierquotesJSON = new L.geoJson(exp_financierquotes,{
+			onEachFeature: pop_financierquotes,
+			pointToLayer: function (feature, latlng) {  
+				return L.circleMarker(latlng, {
+					radius: 4.0,
+					fillColor: '#e31a1c',
+					color: '#000000',
+					weight: 1,
+					opacity: 1.0,
+					fillOpacity: 1.0
+				}).bindLabel(feature.properties.name, {noHide: true})
+			}
+		});
+		//add comment sign to hide this layer on the map in the initial view.
+		feature_group.addLayer(exp_financierquotesJSON);
+
+		feature_group.addTo(map);
+		var title = new L.Control();
+		title.onAdd = function (map) {
+			this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+			this.update();
+			return this._div;
+		};
+		title.update = function () {
+			this._div.innerHTML = '<h2>This is the title</h2>This is the subtitle'
+		};
+		title.addTo(map);
+		var legend = L.control({position: 'bottomright'});
+		legend.onAdd = function (map) {
+			var div = L.DomUtil.create('div', 'info legend');
+			div.innerHTML = "<h3>Legend</h3><table></table>";
+    		return div;
+		};
+		legend.addTo(map);
+		L.control.layers({},{"financierquotes": exp_financierquotesJSON,"financiernarr": exp_financiernarrJSON,"ne50madmin0countries": exp_ne50madmin0countriesJSON},{collapsed:false}).addTo(map);
+		L.control.scale({options: {position: 'bottomleft',maxWidth: 100,metric: true,imperial: false,updateWhenIdle: false}}).addTo(map);
+	</script>
+</body>
+</html>
